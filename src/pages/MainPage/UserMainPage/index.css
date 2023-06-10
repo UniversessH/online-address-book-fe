@@ -1,0 +1,13 @@
+.demo-logo {
+  display: flex;
+  justify-content: center;
+}
+
+.sider-wrapper {
+  .ant-layout-sider-trigger {
+    background: #fff;
+    & > span {
+      color: #8c8c8c;
+    }
+  }
+}

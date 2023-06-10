@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./pages/Login";
 import MainPage from "./pages/MainPage";
+import "./index.css";
 
 const router = createBrowserRouter([
   {

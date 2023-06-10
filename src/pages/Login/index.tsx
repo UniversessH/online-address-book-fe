@@ -14,7 +14,7 @@ import {
   ProFormCheckbox,
 } from "@ant-design/pro-components";
 import { message, Tabs, Button } from "antd";
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 type tabType = "login" | "register";
@@ -27,7 +27,7 @@ const waitTime = (time = 100) => {
   });
 };
 
-const Login = () => {
+const Login: React.FC = () => {
   const [loginType, setLoginType] = useState<tabType>("login");
   const formRef = useRef();
   return (
