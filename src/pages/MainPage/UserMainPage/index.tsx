@@ -57,7 +57,7 @@ const items: MenuItem[] = [
   getItem("通讯录查询", "2", <SearchOutlined />),
 ];
 
-const InnerContent: ReactNode[] = [<StudentInfo />, <InfoSearch />];
+const InnerContent: React.ReactNode[] = [<StudentInfo />, <InfoSearch />];
 
 const UserMainPage: React.FC = () => {
   const [selectedKey, setSelectedkey] = useState(0);
@@ -81,7 +81,7 @@ const UserMainPage: React.FC = () => {
           <Menu
             mode="inline"
             defaultSelectedKeys={["1"]}
-            defaultOpenKeys={["sub1"]}
+            className="menu-wrapper"
             style={{ height: "100%", borderRight: 0 }}
             items={items}
             onClick={(e) => {
