@@ -7,29 +7,41 @@ import {
 } from "@ant-design/icons";
 import {
   LoginForm,
-  LoginFormPage,
-  ProConfigProvider,
-  ProFormCaptcha,
   ProFormText,
-  ProFormCheckbox,
+  ProFormInstance,
 } from "@ant-design/pro-components";
-import { message, Tabs, Button } from "antd";
-import React, { useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Tabs, Button } from "antd";
+import React, { useState, useRef } from "react";
+import { login, register } from "../../network/apis";
 
 type tabType = "login" | "register";
 
-const waitTime = (time = 100) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, time);
-  });
-};
-
 const Login: React.FC = () => {
   const [loginType, setLoginType] = useState<tabType>("login");
-  const formRef = useRef();
+  const [isLoading, setIsLoading] = useState(false);
+  const formRef = useRef<ProFormInstance>();
+
+  const buttonClickHandler = async () => {
+    setIsLoading(true);
+    if (loginType === "login") {
+      try {
+        await login(formRef.current?.getFieldsFormatValue?.());
+        setIsLoading(false);
+      } catch (err) {
+        setIsLoading(false);
+        console.log(err);
+      }
+    } else {
+      try {
+        await register(formRef.current?.getFieldsFormatValue?.());
+        setIsLoading(false);
+      } catch (err) {
+        setIsLoading(false);
+        console.log(err);
+      }
+    }
+  };
+
   return (
     <div
       style={{
@@ -40,6 +52,7 @@ const Login: React.FC = () => {
       }}
     >
       <LoginForm
+        formRef={formRef}
         logo={
           <YuqueOutlined
             style={{
@@ -52,14 +65,16 @@ const Login: React.FC = () => {
         title="网上通讯录系统"
         subTitle="HELP TO CONNECT"
         submitter={{
-          render: (props, doms) => {
+          render: () => {
             return [
               <div style={{ display: "flex", justifyContent: "center" }}>
-                <Link to="/">
-                  <Button type="primary">
-                    {loginType === "login" ? "登陆" : "注册"}
-                  </Button>
-                </Link>
+                <Button
+                  loading={isLoading}
+                  type="primary"
+                  onClick={buttonClickHandler}
+                >
+                  {loginType === "login" ? "登陆" : "注册"}
+                </Button>
               </div>,
             ];
           },
@@ -80,7 +95,7 @@ const Login: React.FC = () => {
                 size: "large",
                 prefix: <MobileOutlined className={"prefixIcon"} />,
               }}
-              name="mobile"
+              name="phone"
               placeholder={"手机号"}
               rules={[
                 {
@@ -143,34 +158,8 @@ const Login: React.FC = () => {
                 },
               ]}
             />
-            {/* <ProFormCaptcha
-              fieldProps={{
-                size: "large",
-                prefix: <LockOutlined className={"prefixIcon"} />,
-              }}
-              captchaProps={{
-                size: "large",
-              }}
-              placeholder={"请输入验证码"}
-              captchaTextRender={(timing, count) => {
-                if (timing) {
-                  return `${count} ${"获取验证码"}`;
-                }
-                return "获取验证码";
-              }}
-              name="captcha"
-              rules={[
-                {
-                  required: true,
-                  message: "请输入验证码！",
-                },
-              ]}
-              onGetCaptcha={async () => {
-                message.success("获取验证码成功！验证码为：1234");
-              }}
-            /> */}
             <ProFormText.Password
-              name="password"
+              name="reg_password"
               fieldProps={{
                 size: "large",
                 prefix: <LockOutlined className={"prefixIcon"} />,
@@ -185,7 +174,7 @@ const Login: React.FC = () => {
             />
             <ProFormText.Password
               name="confirm"
-              dependencies={["password"]}
+              dependencies={["reg_password"]}
               fieldProps={{
                 size: "large",
                 prefix: <LockOutlined className={"prefixIcon"} />,
