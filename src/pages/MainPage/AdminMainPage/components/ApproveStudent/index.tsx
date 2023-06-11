@@ -1,67 +1,105 @@
-import React, { useState } from "react";
-import { Button, Space, Table } from "antd";
-import {
-  ProForm,
-  ProFormText,
-  ProFormDependency,
-  ProFormSelect,
-  ProFormDatePicker,
-  ProFormDigit,
-} from "@ant-design/pro-components";
+import React, { useEffect, useState } from "react";
+import { Button, Divider, Space, Table, message } from "antd";
 import { ColumnsType } from "antd/es/table";
+import {
+  fetchPendingAccount,
+  managePendingAccount,
+} from "../../../../../network/apis";
+interface DataType {
+  name: string;
+  phone: string;
+  application_reason: string;
+}
 
 const ApproveStudent: React.FC = () => {
-  const [isEdit, setIsEdit] = useState(false);
+  const [data, setData] = useState<number>();
+  const [selectedData, setSelectedData] = useState<any>();
 
-  const testData = [
-    {
-      name: "123",
-      phone: "123",
-      reason: "12412",
+  useEffect(() => {
+    fetchAccountList();
+  }, []);
+
+  const rowSelection = {
+    onChange: (selectedRows: DataType[]) => {
+      setSelectedData({
+        student_id: selectedRows[0].id,
+        phone: selectedRows[0].phone,
+      });
     },
-  ];
+    getCheckboxProps: (record: DataType) => ({
+      disabled: record.name === "Disabled User", // Column configuration not to be checked
+      name: record.name,
+    }),
+  };
+
+  const fetchAccountList = async () => {
+    try {
+      const res = await fetchPendingAccount();
+      setData(res);
+    } catch (error) {
+      message.error("加载数据列表出错");
+      console.log(error);
+    }
+  };
+
+  const clickManageBtnHandler = async (status: boolean) => {
+    try {
+      managePendingAccount({
+        ...selectedData,
+        isApproved: status,
+      });
+      fetchAccountList();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const columns: ColumnsType<DataType> = [
     {
       title: "姓名",
       dataIndex: "name",
       key: "name",
-      width:"15%"
     },
     {
       title: "手机号",
       dataIndex: "phone",
       key: "phone",
-      width:"15%"
     },
     {
       title: "申请理由",
-      dataIndex: "reason",
+      dataIndex: "application_reason",
       key: "reason",
-      width:"50%"
-    },
-    {
-      title: "操作",
-      key: "action",
-      render: () => (
-        <Space>
-          <Button type="primary">通过</Button>
-          <Button type="primary" danger>拒绝</Button>
-        </Space>
-      ),
+      width: "60%",
     },
   ];
 
-  function buttonClickHandler(e: any) {
-    console.log(e);
-    setIsEdit(!isEdit);
-  }
   return (
     <div>
       <div style={{ fontSize: "20px", marginBottom: "16px", color: "#4780f7" }}>
         注册账户审批
       </div>
-      <Table columns={columns} dataSource={testData} />
+
+      <Table
+        rowSelection={{
+          type: "radio",
+          ...rowSelection,
+        }}
+        columns={columns}
+        dataSource={data}
+      />
+      <Divider />
+      <Space style={{ marginTop: "16px" }}>
+        <Button type="primary" onClick={() => clickManageBtnHandler(true)}>
+          通过
+        </Button>
+        <Button
+          type="primary"
+          danger
+          onClick={() => clickManageBtnHandler(false)}
+        >
+          拒绝
+        </Button>
+      </Space>
     </div>
   );
 };

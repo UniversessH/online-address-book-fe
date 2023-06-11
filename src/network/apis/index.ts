@@ -32,3 +32,42 @@ export const register = async (userData: IRegisterData) => {
   // toastSth("success", "登陆成功", { theme: "colored" });
   localStorage.setItem("token", res.data.token); //设置token
 };
+
+// 获取所有注册申请的账号
+export const fetchPendingAccount = async () => {
+  const res = await client.get("/students/register_show");
+  console.log(res);
+  return res.data.list;
+};
+
+// 通过 / 拒绝申请的账号
+export const managePendingAccount = async (data: any) => {
+  const res = await client.post("/students/approve", {
+    approve: data.isApproved,
+    student_id: data.student_id,
+    phone: data.phone,
+  });
+  console.log(res);
+};
+
+// 禁用 / 恢复已通过审核的账号
+export const manageApprovedAccount = async (disable: boolean) => {
+  const res = await client.post("/students/forbidden", { disable: disable });
+  console.log(res);
+};
+
+// 获取专业信息
+export const fetchMajorList = async () => {
+  const res = await client.get("/majors");
+  console.log(res);
+};
+
+// 删除专业信息
+export const deleteMajor = async (name: string) => {
+  const res = await client.delete("/majors", {
+    data: {
+      name: name,
+    },
+  });
+  console.log(res);
+};
