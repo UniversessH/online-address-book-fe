@@ -1,10 +1,13 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { YuqueOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Avatar, Dropdown, Layout } from "antd";
 
 const { Header } = Layout;
 
 const ComposeHeader: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <Header
       style={{
@@ -34,6 +37,10 @@ const ComposeHeader: React.FC = () => {
               key: "logout",
               icon: <LogoutOutlined />,
               label: "退出登录",
+              onClick: function () {
+                localStorage.clear();
+                navigate("/login");
+              },
             },
           ],
         }}
