@@ -8,8 +8,8 @@ interface IUserInfo {
 interface IRegisterData {
   name: string;
   phone: string;
-  password: string;
-  application_reason: string;
+  reg_password: string;
+  reason: string;
 }
 
 export const login = async (userInfo: IUserInfo) => {
@@ -19,14 +19,15 @@ export const login = async (userInfo: IUserInfo) => {
   });
   // toastSth("success", "登陆成功", { theme: "colored" });
   localStorage.setItem("token", res.data.token); //设置token
+  localStorage.setItem("is_admin", res.data.is_admin);
 };
 
 export const register = async (userData: IRegisterData) => {
   const res = await client.post("/students/register", {
     name: userData.name,
     phone: userData.phone,
-    password: userData.password,
-    application_reason: userData.application_reason,
+    password: userData.reg_password,
+    application_reason: userData.reason,
   });
   // toastSth("success", "登陆成功", { theme: "colored" });
   localStorage.setItem("token", res.data.token); //设置token

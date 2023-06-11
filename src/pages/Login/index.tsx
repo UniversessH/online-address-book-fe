@@ -10,7 +10,8 @@ import {
   ProFormText,
   ProFormInstance,
 } from "@ant-design/pro-components";
-import { Tabs, Button } from "antd";
+import { useNavigate } from "react-router-dom";
+import { Tabs, Button, message, Modal } from "antd";
 import React, { useState, useRef } from "react";
 import { login, register } from "../../network/apis";
 
@@ -19,7 +20,10 @@ type tabType = "login" | "register";
 const Login: React.FC = () => {
   const [loginType, setLoginType] = useState<tabType>("login");
   const [isLoading, setIsLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const formRef = useRef<ProFormInstance>();
+
+  const navigate = useNavigate();
 
   const buttonClickHandler = async () => {
     setIsLoading(true);
@@ -27,17 +31,19 @@ const Login: React.FC = () => {
       try {
         await login(formRef.current?.getFieldsFormatValue?.());
         setIsLoading(false);
+        navigate("/", { replace: true });
       } catch (err) {
         setIsLoading(false);
-        console.log(err);
+        message.error(err?.response.data.error);
       }
     } else {
       try {
         await register(formRef.current?.getFieldsFormatValue?.());
+        setIsModalOpen(true);
         setIsLoading(false);
       } catch (err) {
         setIsLoading(false);
-        console.log(err);
+        message.error(err?.response.data.msg);
       }
     }
   };
@@ -51,6 +57,16 @@ const Login: React.FC = () => {
         justifyContent: "center",
       }}
     >
+      <Modal
+        title="提示"
+        open={isModalOpen}
+        footer={[]}
+        onCancel={() => setIsModalOpen(false)}
+      >
+        <div>
+          注册成功后需要管理员进行审核，暂时无法登陆，请耐心等待管理员审核
+        </div>
+      </Modal>
       <LoginForm
         formRef={formRef}
         logo={
@@ -145,7 +161,7 @@ const Login: React.FC = () => {
                 size: "large",
                 prefix: <MobileOutlined className={"prefixIcon"} />,
               }}
-              name="mobile"
+              name="phone"
               placeholder={"手机号"}
               rules={[
                 {
@@ -187,7 +203,7 @@ const Login: React.FC = () => {
                 },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
-                    if (!value || getFieldValue("password") === value) {
+                    if (!value || getFieldValue("reg_password") === value) {
                       return Promise.resolve();
                     }
                     return Promise.reject(new Error("两次输入的密码不匹配！"));
