@@ -9,8 +9,9 @@ import type { MenuProps } from "antd";
 import { Layout, Menu, theme } from "antd";
 import ComposeHeader from "./components/ComposeHeader";
 import "./index.css";
-import StudentInfo from "./components/StudentInfo";
-import InfoSearch from "./components/InfoSearch";
+import StudentInfo from "./components/ApproveStudent";
+import InfoSearch from "./components/AuthorityManage";
+import MajorManage from "./components/MajorManage";
 
 const { Content, Sider } = Layout;
 
@@ -65,7 +66,11 @@ const items: MenuItem[] = [
   getItem("专业信息管理", "3", <ProfileOutlined />),
 ];
 
-const InnerContent: React.ReactNode[] = [<StudentInfo />, <InfoSearch />];
+const InnerContent: React.ReactNode[] = [
+  <StudentInfo />,
+  <InfoSearch />,
+  <MajorManage />,
+];
 
 const AdminMainPage: React.FC = () => {
   const [selectedKey, setSelectedkey] = useState(0);
