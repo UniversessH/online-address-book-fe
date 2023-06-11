@@ -1,44 +1,56 @@
 import React, { useEffect, useState } from "react";
-import { Button, Divider, Space, Table, message } from "antd";
+import { Button, Divider, Space, Spin, Table, message } from "antd";
 import { ColumnsType } from "antd/es/table";
 import {
   fetchPendingAccount,
   managePendingAccount,
 } from "../../../../../network/apis";
 interface DataType {
+  id: number;
   name: string;
   phone: string;
   application_reason: string;
 }
 
+interface ISelectedData {
+  student_id: number;
+  phone: string;
+}
+
 const ApproveStudent: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<number>();
-  const [selectedData, setSelectedData] = useState<any>();
+  const [selectedData, setSelectedData] = useState<ISelectedData>();
 
   useEffect(() => {
     fetchAccountList();
   }, []);
 
   const rowSelection = {
-    onChange: (selectedRows: DataType[]) => {
+    onChange: (__: React.Key[], selectedRows: DataType[]) => {
       setSelectedData({
         student_id: selectedRows[0].id,
         phone: selectedRows[0].phone,
       });
     },
-    getCheckboxProps: (record: DataType) => ({
-      disabled: record.name === "Disabled User", // Column configuration not to be checked
-      name: record.name,
-    }),
   };
 
   const fetchAccountList = async () => {
     try {
+      setIsLoading(true);
       const res = await fetchPendingAccount();
-      setData(res);
+      const newData = res.map((item: any) => {
+        return {
+          ...item,
+          key: item.id,
+        };
+      });
+      setData(newData);
+      setIsLoading(false);
     } catch (error) {
       message.error("加载数据列表出错");
       console.log(error);
+      setIsLoading(false);
     }
   };
 
@@ -48,7 +60,7 @@ const ApproveStudent: React.FC = () => {
         ...selectedData,
         isApproved: status,
       });
-      fetchAccountList();
+      window.location.reload();
     } catch (error) {
       console.log(error);
     }
@@ -78,15 +90,16 @@ const ApproveStudent: React.FC = () => {
       <div style={{ fontSize: "20px", marginBottom: "16px", color: "#4780f7" }}>
         注册账户审批
       </div>
-
-      <Table
-        rowSelection={{
-          type: "radio",
-          ...rowSelection,
-        }}
-        columns={columns}
-        dataSource={data}
-      />
+      <Spin spinning={isLoading}>
+        <Table
+          rowSelection={{
+            type: "radio",
+            ...rowSelection,
+          }}
+          columns={columns}
+          dataSource={data}
+        />
+      </Spin>
       <Divider />
       <Space style={{ marginTop: "16px" }}>
         <Button type="primary" onClick={() => clickManageBtnHandler(true)}>

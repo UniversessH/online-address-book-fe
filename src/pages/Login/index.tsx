@@ -63,9 +63,8 @@ const Login: React.FC = () => {
         footer={[]}
         onCancel={() => setIsModalOpen(false)}
       >
-        <div>
-          注册成功后需要管理员进行审核，暂时无法登陆，请耐心等待管理员审核
-        </div>
+        <div>注册成功后需要管理员进行审核，注册账号暂时无法登陆</div>
+        <div>请耐心等待管理员审核通过后尝试登陆</div>
       </Modal>
       <LoginForm
         formRef={formRef}

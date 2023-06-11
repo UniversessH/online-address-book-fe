@@ -23,14 +23,12 @@ export const login = async (userInfo: IUserInfo) => {
 };
 
 export const register = async (userData: IRegisterData) => {
-  const res = await client.post("/students/register", {
+  await client.post("/students/register", {
     name: userData.name,
     phone: userData.phone,
     password: userData.reg_password,
     application_reason: userData.reason,
   });
-  // toastSth("success", "登陆成功", { theme: "colored" });
-  localStorage.setItem("token", res.data.token); //设置token
 };
 
 // 获取所有注册申请的账号
