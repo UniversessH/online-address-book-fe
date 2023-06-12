@@ -4,14 +4,16 @@ import {
   UserAddOutlined,
   ProfileOutlined,
   TeamOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Layout, Menu, theme } from "antd";
 import ComposeHeader from "./components/ComposeHeader";
 import "./index.css";
-import StudentInfo from "./components/ApproveStudent";
-import InfoSearch from "./components/AuthorityManage";
+import ApproveStudent from "./components/ApproveStudent";
+import AuthorityManage from "./components/AuthorityManage";
 import MajorManage from "./components/MajorManage";
+import StudentInfo from "./components/StudentInfo";
 
 const { Content, Sider } = Layout;
 
@@ -59,6 +61,7 @@ function getItem(
 }
 
 const items: MenuItem[] = [
+  getItem("学生信息", "4", <FileTextOutlined />),
   getItem("账户管理", "sub1", <TeamOutlined />, [
     getItem("注册账户审批", "1", <UserAddOutlined />),
     getItem("账户权限管理", "2", <SafetyOutlined />),
@@ -67,13 +70,14 @@ const items: MenuItem[] = [
 ];
 
 const InnerContent: React.ReactNode[] = [
-  <StudentInfo />,
-  <InfoSearch />,
+  <ApproveStudent />,
+  <AuthorityManage />,
   <MajorManage />,
+  <StudentInfo />,
 ];
 
 const AdminMainPage: React.FC = () => {
-  const [selectedKey, setSelectedkey] = useState(0);
+  const [selectedKey, setSelectedkey] = useState(3);
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer },
@@ -93,8 +97,8 @@ const AdminMainPage: React.FC = () => {
         >
           <Menu
             mode="inline"
-            defaultSelectedKeys={["1"]}
-            defaultOpenKeys={["sub1"]}
+            defaultSelectedKeys={["4"]}
+            // defaultOpenKeys={["sub1"]}
             className="menu-wrapper"
             style={{ height: "100%", borderRight: 0 }}
             items={items}
