@@ -1,47 +1,55 @@
-import React, { useState } from "react";
-import { Button } from "antd";
-import {
-  ProForm,
-  ProFormText,
-  ProFormDependency,
-  ProFormSelect,
-  ProFormDatePicker,
-  ProFormDigit,
-} from "@ant-design/pro-components";
+import React, { useEffect, useState, useRef } from "react";
+import { Button, message } from "antd";
+import { ProForm, ProFormText } from "@ant-design/pro-components";
+import { compeleteSelfInfo, fetchSelfInfo } from "../../../../../network/apis";
 
 const StudentInfo: React.FC = () => {
   const [isEdit, setIsEdit] = useState(false);
+  const formRef = useRef();
 
-  function buttonClickHandler(e: any) {
-    console.log(e);
+  useEffect(() => {
+    getSelfInfo();
+  }, []);
+
+  const getSelfInfo = async () => {
+    try {
+      const res = await fetchSelfInfo();
+      console.log(res);
+      // setData(res);
+      formRef?.current?.setFieldsValue(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updateSelfInfo = async () => {
+    try {
+      const data = formRef?.current?.getFieldsFormatValue?.();
+      await compeleteSelfInfo(data);
+    } catch (error) {
+      console.log(error);
+      message.error("更新出错，请检查是否输入非法值");
+    }
+  };
+
+  function buttonClickHandler() {
     setIsEdit(!isEdit);
+    if (isEdit) {
+      updateSelfInfo();
+    }
   }
   return (
     <div>
       <div style={{ fontSize: "20px", marginBottom: "16px", color: "#4780f7" }}>
-        学生信息
+        个人信息
       </div>
       <ProForm
+        formRef={formRef}
         readonly={!isEdit}
-        initialValues={{
-          name: "",
-          major: "",
-          class: "",
-          enrollment_year: "",
-          graduation_year: "",
-          company: "",
-          city: "",
-          phone: "",
-          email: "",
-        }}
         submitter={{
           render: () => {
             return [
-              <Button
-                htmlType="button"
-                onClick={(e) => buttonClickHandler(e)}
-                key="edit"
-              >
+              <Button htmlType="button" onClick={buttonClickHandler} key="edit">
                 {isEdit ? "保存并提交" : "编辑"}
               </Button>,
             ];

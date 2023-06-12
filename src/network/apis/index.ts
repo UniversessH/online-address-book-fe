@@ -72,8 +72,29 @@ export const deleteMajor = async (name: string) => {
   });
 };
 
+// 添加专业信息
 export const addMajor = async (major: string) => {
   await client.post("/majors/add", {
     name: major,
+  });
+};
+
+// 获取自己专业信息
+export const fetchSelfInfo = async () => {
+  const res = await client.get("/students/info");
+  return res.data;
+};
+
+// 学生完善通讯录信息
+export const compeleteSelfInfo = async (data: any) => {
+  await client.post("/students/info", {
+    major: data.major,
+    class: +data.class,
+    enrollment_year: +data.enrollment_year,
+    graduation_year: +data.graduation_year,
+    company: data.company,
+    city: data.city,
+    phone: data.phone,
+    email: data.email,
   });
 };
