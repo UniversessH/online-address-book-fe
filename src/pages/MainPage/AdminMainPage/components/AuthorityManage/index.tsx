@@ -9,7 +9,10 @@ const AuthorityManage: React.FC = () => {
 
   const clickManageBtnHandler = async (isDisable: boolean) => {
     try {
-      await manageApprovedAccount(isDisable);
+      await manageApprovedAccount({
+        student_id: +formRef?.current?.getFieldValue("student_id"),
+        disable: isDisable,
+      });
       message.success(`${isDisable ? "已将该账号禁用" : "已启用该账号"}`);
       formRef?.current?.setFieldsValue({
         student_id: "",

@@ -47,6 +47,7 @@ const ApproveStudent: React.FC = () => {
       });
       setData(newData);
       setIsLoading(false);
+      message.success("数据加载成功");
     } catch (error) {
       message.error("加载数据列表出错");
       console.log(error);
@@ -56,11 +57,11 @@ const ApproveStudent: React.FC = () => {
 
   const clickManageBtnHandler = async (status: boolean) => {
     try {
-      managePendingAccount({
+      await managePendingAccount({
         ...selectedData,
         isApproved: status,
       });
-      window.location.reload();
+      fetchAccountList();
     } catch (error) {
       console.log(error);
     }

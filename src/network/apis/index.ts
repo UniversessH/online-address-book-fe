@@ -49,23 +49,31 @@ export const managePendingAccount = async (data: any) => {
 };
 
 // 禁用 / 恢复已通过审核的账号
-export const manageApprovedAccount = async (disable: boolean) => {
-  const res = await client.post("/students/forbidden", { disable: disable });
+export const manageApprovedAccount = async (data: any) => {
+  const res = await client.post("/students/forbidden", {
+    student_id: data.student_id,
+    disable: data.disable,
+  });
   console.log(res);
 };
 
 // 获取专业信息
 export const fetchMajorList = async () => {
   const res = await client.get("/majors");
-  console.log(res);
+  return res;
 };
 
 // 删除专业信息
 export const deleteMajor = async (name: string) => {
-  const res = await client.delete("/majors", {
+  await client.delete("/majors", {
     data: {
       name: name,
     },
   });
-  console.log(res);
+};
+
+export const addMajor = async (major: string) => {
+  await client.post("/majors/add", {
+    name: major,
+  });
 };
