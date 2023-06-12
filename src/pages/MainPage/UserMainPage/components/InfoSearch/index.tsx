@@ -1,9 +1,38 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { ProForm, ProFormText } from "@ant-design/pro-components";
-import { Table } from "antd";
+import { Table, message } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import { searchInfoList } from "../../../../../network/apis";
 
 const InfoSearch: React.FC = () => {
+  const [data, setData] = useState<any>();
+  const formRef = useRef();
+
+  useEffect(() => {
+    getInfoList();
+  }, []);
+
+  const getInfoList = async () => {
+    try {
+      const res = await searchInfoList();
+      setData(res.data.list);
+      message.success(res.message);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const searchHandler = async (value) => {
+    console.log(value);
+    try {
+      const res = await searchInfoList(value);
+      setData(res.data.list);
+      message.success(res.message);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const columns: ColumnsType<DataType> = [
     {
       title: "姓名",
@@ -21,9 +50,14 @@ const InfoSearch: React.FC = () => {
       key: "class",
     },
     {
-      title: "在校时间",
-      dataIndex: "time_scope",
-      key: "time_scope",
+      title: "入学时间",
+      dataIndex: "enrollment_year",
+      key: "enrollment_year",
+    },
+    {
+      title: "毕业时间",
+      dataIndex: "graduation_year",
+      key: "graduation_year",
     },
     {
       title: "就业单位",
@@ -36,9 +70,14 @@ const InfoSearch: React.FC = () => {
       key: "city",
     },
     {
-      title: "联系方式",
-      dataIndex: "contact",
-      key: "contact",
+      title: "电子邮箱",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
+      title: "电话号码",
+      dataIndex: "phone",
+      key: "phone",
     },
   ];
 
@@ -52,7 +91,7 @@ const InfoSearch: React.FC = () => {
       >
         最少填写一个查询项
       </div>
-      <ProForm>
+      <ProForm formRef={formRef} onFinish={searchHandler}>
         <ProForm.Group>
           <ProFormText
             width="md"
@@ -79,7 +118,11 @@ const InfoSearch: React.FC = () => {
           <ProFormText label="入学年份" name="enrollment_year" />
         </ProForm.Group>
       </ProForm>
-      <Table columns={columns} style={{ marginTop: "16px" }}></Table>
+      <Table
+        columns={columns}
+        style={{ marginTop: "16px" }}
+        dataSource={data}
+      ></Table>
     </>
   );
 };

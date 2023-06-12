@@ -98,3 +98,16 @@ export const compeleteSelfInfo = async (data: any) => {
     email: data.email,
   });
 };
+
+// 查询通讯录信息
+export const searchInfoList = async (data?: any) => {
+  const url = data
+    ? `/students/search?${data.name ? `name=${data.name}` : ""}${
+        data.major ? `&major=${data.major}` : ""
+      }${data.class ? `&class=${data.class}` : ""}${
+        data.enrollment_year ? `&enrollment_year=${data.enrollment_year}` : ""
+      }`
+    : "/students/search";
+  const res = await client.get(url);
+  return res;
+};
